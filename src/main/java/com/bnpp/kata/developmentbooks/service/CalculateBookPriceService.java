@@ -11,10 +11,19 @@ public class CalculateBookPriceService {
 
     public double calculatePrice(List<BookRequest> bookRequest) {
 
-        return bookRequest.stream().mapToDouble(bookReq -> {
+        double discount = 0.0;
+        double totalPrice = bookRequest.stream().mapToDouble(bookReq -> {
             BooksEnum book = Arrays.stream(BooksEnum.values())
                     .filter(bookValue -> bookValue.getId() == bookReq.getBookId ()).findFirst().orElse(null);
             return (book != null) ? book.getPrice() * bookReq.getQuantity() : 0.0;
         }).sum();
+
+        long uniqueBookCount = bookRequest.stream().map(BookRequest::getBookId).distinct().count();
+
+        if (uniqueBookCount == 2) {
+            discount = 0.05;
+        }
+
+        return totalPrice * (1 - discount);
     }
 }
