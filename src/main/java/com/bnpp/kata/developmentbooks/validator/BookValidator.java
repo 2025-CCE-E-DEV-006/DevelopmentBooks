@@ -15,23 +15,41 @@ public class BookValidator {
 
     public void validateBooks (List<BookRequest> bookRequest) {
 
-        Set<Integer> validBookIds = Arrays.stream(BooksEnum.values())
-                .map(BooksEnum::getId).collect(Collectors.toSet());
+        checkForValidBooks(bookRequest);
+        checkForValidQuantities(bookRequest);
+    }
 
-        List<Integer> invalidBookIds = bookRequest.stream ()
-                .map (BookRequest::getBookId)
-                .filter (id -> !validBookIds.contains (id)).collect (Collectors.toList ());
+    private void checkForValidBooks (List<BookRequest> bookRequest) {
 
-        if (!invalidBookIds.isEmpty ()) {
-            throw new InvalidBookException ("Invalid Book IDs : " + invalidBookIds);
+        Set<Integer> validBookIds = getValidBooks ();
+        List<Integer> invalidBookIds = checkInvalidBookIds(bookRequest, validBookIds);
+
+        if (!invalidBookIds.isEmpty()) {
+            throw new InvalidBookException ("Invalid Book IDs: " + invalidBookIds);
         }
+    }
 
-        List<Integer> invalidQuantities = bookRequest.stream()
-                .map(BookRequest::getQuantity)
-                .filter(qty -> qty <= 0).collect(Collectors.toList());
+    private static Set<Integer> getValidBooks () {
+        return Arrays.stream(BooksEnum.values()).map(BooksEnum::getId)
+                .collect(Collectors.toSet());
+    }
+
+    private static List<Integer> checkInvalidBookIds (List<BookRequest> bookRequest, Set<Integer> validBookIds) {
+        return bookRequest.stream().map(BookRequest::getBookId).filter(id -> !validBookIds.contains(id))
+                .collect(Collectors.toList());
+    }
+
+    private void checkForValidQuantities (List<BookRequest> bookRequest) {
+
+        List<Integer> invalidQuantities = getInvalidBookQuantities (bookRequest);
 
         if (!invalidQuantities.isEmpty()) {
-            throw new InvalidBookException("Invalid Book Quantities: " + invalidQuantities);
+            throw new InvalidBookException("Invalid quantities: " + invalidQuantities);
         }
+    }
+
+    private static List<Integer> getInvalidBookQuantities (List<BookRequest> bookRequest) {
+        return bookRequest.stream().map(BookRequest::getQuantity).filter(qty -> qty <= 0)
+                .collect(Collectors.toList());
     }
 }
