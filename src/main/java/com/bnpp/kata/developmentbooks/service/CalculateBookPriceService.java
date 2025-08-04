@@ -16,8 +16,7 @@ public class CalculateBookPriceService {
         Map<BooksEnum, Integer> bookCountMap = getBooksCount(bookRequest);
         Map<BooksEnum, Integer> booksCount = new HashMap<> (bookCountMap);
 
-        while ((booksCount.values().stream().anyMatch(count -> count > 0))) {
-
+        while (hasBooksLeft(booksCount)) {
             List<BooksEnum> selectedBooks = selectBooks(booksCount);
 
             if (!selectedBooks.isEmpty()) {
@@ -41,6 +40,10 @@ public class CalculateBookPriceService {
         });
 
         return booksCount;
+    }
+
+    private boolean hasBooksLeft(Map<BooksEnum, Integer> booksCount) {
+        return booksCount.values().stream().anyMatch(count -> count > 0);
     }
 
     private List<BooksEnum> selectBooks(Map<BooksEnum, Integer> booksCount) {

@@ -8,8 +8,9 @@ import lombok.Getter;
 public enum DiscountEnum {
 
 	TWO_BOOKS(2, 0.05), 
-	THREE_BOOKS(3, 0.10);
-	
+	THREE_BOOKS(3, 0.10),
+	FOUR_BOOKS(4, 0.20);
+
 	private final int numberOfDistinctItems;
     private final double discountPercentage;
     
