@@ -1,5 +1,6 @@
 package com.bnpp.kata.developmentbooks.service;
 
+import com.bnpp.kata.developmentbooks.exception.InvalidBookException;
 import com.bnpp.kata.developmentbooks.model.BookGroup;
 import com.bnpp.kata.developmentbooks.model.BookRequest;
 import com.bnpp.kata.developmentbooks.model.BookResponse;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 public class CalculateBookPriceServiceTest {
@@ -128,5 +130,14 @@ public class CalculateBookPriceServiceTest {
         assertEquals(95.0, price.getFinalPrice ());
         assertEquals(2, price.getListOfBookGroups ().get (0).getNumberOfBooks ());
         assertEquals(5.0, price.getListOfBookGroups ().get (0).getDiscountAmount ());
+    }
+
+    @Test
+    @DisplayName ("Invalid Book ID should throw exception")
+    public void calculatePrice_withInvalidBookId_shouldThrowException() {
+
+        List<BookRequest> invalidBookId = Arrays.asList(new BookRequest(99, 1));
+
+        assertThrows(InvalidBookException.class, () -> calculateBookPriceService.calculatePrice (invalidBookId));
     }
 }

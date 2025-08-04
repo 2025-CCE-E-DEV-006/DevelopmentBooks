@@ -5,14 +5,21 @@ import com.bnpp.kata.developmentbooks.model.BookRequest;
 import com.bnpp.kata.developmentbooks.model.BookResponse;
 import com.bnpp.kata.developmentbooks.store.BooksEnum;
 import com.bnpp.kata.developmentbooks.store.DiscountEnum;
+import com.bnpp.kata.developmentbooks.validator.BookValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CalculateBookPriceService {
 
+    private final BookValidator bookValidator;
+
     public BookResponse calculatePrice (List<BookRequest> bookRequest) {
+
+        bookValidator.validateBooks(bookRequest);
 
         Map<BooksEnum, Integer> bookCountMap = getBooksCount(bookRequest);
         List<Integer> applicableDiscountSet = getApplicableDiscountSet(bookCountMap.size());
