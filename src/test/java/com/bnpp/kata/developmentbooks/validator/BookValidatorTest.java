@@ -24,4 +24,13 @@ public class BookValidatorTest {
 
         assertThrows(InvalidBookException.class, () -> bookValidator.validateBooks (invalidBookId));
     }
+
+    @Test
+    @DisplayName("Invalid Book Quantity should throw exception")
+    void validateBooks_withZeroQuantity_shouldThrowException() {
+
+        List<BookRequest> invalidBookId = Arrays.asList(new BookRequest(1, 0));
+
+        assertThrows(InvalidBookException.class, () -> bookValidator.validateBooks (invalidBookId));
+    }
 }
