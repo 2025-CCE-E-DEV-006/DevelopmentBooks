@@ -1,5 +1,6 @@
 package com.bnpp.kata.developmentbooks.service;
 
+import com.bnpp.kata.developmentbooks.model.BookGroup;
 import com.bnpp.kata.developmentbooks.model.BookRequest;
 import com.bnpp.kata.developmentbooks.model.BookResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -96,5 +97,21 @@ public class CalculateBookPriceServiceTest {
         BookResponse price = calculateBookPriceService.calculatePrice(bookRequests);
 
         assertEquals(320.0, price.getFinalPrice ());
+    }
+
+    @Test
+    @DisplayName ("Response contains book group with discount,total discount of the book group and group price")
+    public void calculatePriceForBookSet_ResponseContainsDiscountAndPriceOfBookGroup() {
+
+        List<BookRequest> bookRequests = Arrays.asList(new BookRequest(1, 1),new BookRequest(2, 1));
+
+        BookResponse price = calculateBookPriceService.calculatePrice(bookRequests);
+        BookGroup group = price.getListOfBookGroups().get(0);
+
+        assertEquals(2, group.getNumberOfBooks ());
+        assertEquals(100.0, group.getActualPrice());
+        assertEquals(5.0, group.getDiscountAmount());
+        assertEquals(5.0, group.getDiscountPercentage());
+        assertEquals(95.0, group.getFinalGroupPrice());
     }
 }
