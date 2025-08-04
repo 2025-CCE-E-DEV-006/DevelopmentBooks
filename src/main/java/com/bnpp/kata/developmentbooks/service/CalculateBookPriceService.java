@@ -16,15 +16,9 @@ public class CalculateBookPriceService {
 
         Map<BooksEnum, Integer> bookCountMap = getBooksCount(bookRequest);
         List<Integer> applicableDiscountSet = getApplicableDiscountSet(bookCountMap.size());
-        Map<Double, List<BookGroup>> priceToGroupMap = calculatePriceForEachDiscountSet (applicableDiscountSet,bookCountMap);
+        Map<Double, List<BookGroup>> priceToGroupMap = calculatePriceForEachDiscountSet(applicableDiscountSet,bookCountMap);
 
-        Optional<Double> minPrice = priceToGroupMap.keySet().stream().reduce(Double::min);
-        List<BookGroup> associatedBookGroups = priceToGroupMap.get(minPrice.get());
-
-        return BookResponse.builder ()
-                .listOfBookGroups(associatedBookGroups)
-                .finalPrice (minPrice.get())
-                .build ();
+        return findMinimumPriceResponse(priceToGroupMap);
     }
 
     private Map<BooksEnum, Integer> getBooksCount(List<BookRequest> bookRequest) {
@@ -65,9 +59,11 @@ public class CalculateBookPriceService {
         Map<BooksEnum, Integer> booksCount = new HashMap<>(OriginalBooksCount);
         Map<Double, List<BookGroup>> priceToGroupMap = new HashMap<>();
         List<BookGroup> bookGroups = new ArrayList<>();
-        double[] totalPrice =new double[1];
+        double[] totalPrice = new double[1];
+
         processBooks(booksCount, bookGroupSize, bookGroups, totalPrice);
         priceToGroupMap.put(totalPrice[0], bookGroups);
+
         return priceToGroupMap;
     }
 
@@ -107,6 +103,12 @@ public class CalculateBookPriceService {
         return selectedBooks;
     }
 
+    private double getDiscount (int uniqueBookCount) {
+        return Arrays.stream(DiscountEnum.values())
+                .filter(discount -> discount.getNumberOfDistinctItems() == uniqueBookCount)
+                .map(DiscountEnum::getDiscountPercentage).findFirst().orElse(0.0);
+    }
+
     private BookGroup createBookGroup(List<BooksEnum> selectedBooks, double discount, double actualPrice) {
 
         return BookGroup.builder()
@@ -119,9 +121,32 @@ public class CalculateBookPriceService {
                 .build();
     }
 
-    private double getDiscount (int uniqueBookCount) {
-        return Arrays.stream(DiscountEnum.values())
-                .filter(discount -> discount.getNumberOfDistinctItems() == uniqueBookCount)
-                .map(DiscountEnum::getDiscountPercentage).findFirst().orElse(0.0);
+    private BookResponse findMinimumPriceResponse(Map<Double, List<BookGroup>> totalPrices) {
+
+        Optional<Double> minPrice = totalPrices.keySet().stream().reduce(Double::min);
+        List<BookGroup> associatedBookGroups = totalPrices.get(minPrice.get());
+
+        return createBookResponse(associatedBookGroups, minPrice.get());
+    }
+
+    private BookResponse createBookResponse(List<BookGroup> bookGroups, double finalPrice) {
+
+        double actualPrice = calculateActualPrice(bookGroups);
+        double totalDiscount = calculateTotalDiscount(bookGroups);
+
+        return BookResponse.builder()
+                .listOfBookGroups(bookGroups)
+                .actualPrice(actualPrice)
+                .totalDiscount(totalDiscount)
+                .finalPrice(finalPrice)
+                .build();
+    }
+
+    private double calculateActualPrice(List<BookGroup> bookGroups) {
+        return bookGroups.stream().mapToDouble(BookGroup::getActualPrice).sum();
+    }
+
+    private double calculateTotalDiscount(List<BookGroup> bookGroups) {
+        return bookGroups.stream().mapToDouble(BookGroup::getDiscountAmount).sum();
     }
 }

@@ -114,4 +114,19 @@ public class CalculateBookPriceServiceTest {
         assertEquals(5.0, group.getDiscountPercentage());
         assertEquals(95.0, group.getFinalGroupPrice());
     }
+
+    @Test
+    @DisplayName ("Response contains final total price and total discount of the purchase")
+    public void calculatePriceForDistinctBooks_ShouldCalculateFinalPriceAndDiscount() {
+
+        List<BookRequest> bookRequests = Arrays.asList(new BookRequest(1, 1),new BookRequest(2, 1));
+
+        BookResponse price = calculateBookPriceService.calculatePrice(bookRequests);
+
+        assertEquals(100.0, price.getActualPrice ());
+        assertEquals(5.0, price.getTotalDiscount ());
+        assertEquals(95.0, price.getFinalPrice ());
+        assertEquals(2, price.getListOfBookGroups ().get (0).getNumberOfBooks ());
+        assertEquals(5.0, price.getListOfBookGroups ().get (0).getDiscountAmount ());
+    }
 }
