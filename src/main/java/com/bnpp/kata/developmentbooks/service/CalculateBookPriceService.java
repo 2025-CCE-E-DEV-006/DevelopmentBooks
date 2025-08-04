@@ -3,6 +3,7 @@ package com.bnpp.kata.developmentbooks.service;
 import com.bnpp.kata.developmentbooks.model.BookRequest;
 import com.bnpp.kata.developmentbooks.model.BookResponse;
 import com.bnpp.kata.developmentbooks.store.BooksEnum;
+import com.bnpp.kata.developmentbooks.store.DiscountEnum;
 import org.springframework.stereotype.Service;
 import java.util.*;
 
@@ -17,13 +18,8 @@ public class CalculateBookPriceService {
 
         while ((booksCount.values().stream().anyMatch(count -> count > 0))) {
 
-            List<BooksEnum> selectedBooks = new ArrayList<> ();
-            for (BooksEnum bookEnum : BooksEnum.values()) {
-                if (booksCount.getOrDefault(bookEnum, 0) > 0) {
-                    selectedBooks.add(bookEnum);
-                    booksCount.put(bookEnum, booksCount.get(bookEnum) - 1);
-                }
-            }
+            List<BooksEnum> selectedBooks = selectBooks(booksCount);
+
             if (!selectedBooks.isEmpty()) {
                 double actualPrice = selectedBooks.size() * 50;
                 finalPrice += actualPrice * (1 - getDiscount(selectedBooks.size()));
@@ -47,13 +43,21 @@ public class CalculateBookPriceService {
         return booksCount;
     }
 
-    private double getDiscount (long uniqueBookCount) {
+    private List<BooksEnum> selectBooks(Map<BooksEnum, Integer> booksCount) {
+        List<BooksEnum> selectedBooks = new ArrayList<>();
 
-        if (uniqueBookCount == 3)
-            return 0.10;
-        else if (uniqueBookCount == 2)
-            return 0.05;
-        else
-            return 0.0;
+        for (BooksEnum bookEnum : BooksEnum.values()) {
+            if (booksCount.getOrDefault(bookEnum, 0) > 0) {
+                selectedBooks.add(bookEnum);
+                booksCount.put(bookEnum, booksCount.get(bookEnum) - 1);
+            }
+        }
+        return selectedBooks;
+    }
+
+    private double getDiscount (int uniqueBookCount) {
+        return Arrays.stream(DiscountEnum.values())
+                .filter(discount -> discount.getNumberOfDistinctItems() == uniqueBookCount)
+                .map(DiscountEnum::getDiscountPercentage).findFirst().orElse(0.0);
     }
 }
