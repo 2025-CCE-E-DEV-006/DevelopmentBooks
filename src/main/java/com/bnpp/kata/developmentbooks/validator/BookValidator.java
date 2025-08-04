@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import static com.bnpp.kata.developmentbooks.constants.Constants.*;
 
 @Component
 public class BookValidator {
@@ -25,7 +26,7 @@ public class BookValidator {
         List<Integer> invalidBookIds = checkInvalidBookIds(bookRequest, validBookIds);
 
         if (!invalidBookIds.isEmpty()) {
-            throw new InvalidBookException ("Invalid Book IDs: " + invalidBookIds);
+            throw new InvalidBookException (INVALID_BOOK_ID  + invalidBookIds);
         }
     }
 
@@ -44,7 +45,7 @@ public class BookValidator {
         List<Integer> invalidQuantities = getInvalidBookQuantities (bookRequest);
 
         if (!invalidQuantities.isEmpty()) {
-            throw new InvalidBookException("Invalid quantities: " + invalidQuantities);
+            throw new InvalidBookException(INVALID_BOOK_QUANTITY  + invalidQuantities);
         }
     }
 

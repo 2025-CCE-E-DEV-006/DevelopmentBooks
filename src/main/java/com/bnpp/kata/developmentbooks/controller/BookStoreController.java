@@ -12,22 +12,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import static com.bnpp.kata.developmentbooks.constants.Constants.*;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/bookstore")
+@RequestMapping("${bookstore.controller.path}")
 public class BookStoreController {
 
     private final CalculateBookPriceService calculateBookPriceService;
 
-    @PostMapping("/calculateprice")
+    @PostMapping("${bookstore.endpoint.calculatePrice}")
     public ResponseEntity<BookResponse> calculatePrice(@RequestBody List<BookRequest> request) {
 
         if (!CollectionUtils.isEmpty(request)) {
             return new ResponseEntity<> (calculateBookPriceService.calculatePrice (request), HttpStatus.OK);
         }
-        throw new InvalidBookException ("Invalid book request");
+        throw new InvalidBookException (INVALID_BOOK_REQUEST);
     }
 }
