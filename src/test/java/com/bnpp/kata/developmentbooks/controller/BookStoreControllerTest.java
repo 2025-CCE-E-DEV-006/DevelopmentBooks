@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,5 +38,15 @@ public class BookStoreControllerTest {
         mockMvc.perform(post("/api/bookstore/calculateprice").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper ().writeValueAsString(bookRequests))).andExpect(status().isOk())
                 .andExpect(jsonPath ("$.finalPrice").exists());
+    }
+
+    @Test
+    @DisplayName ("Rest API : empty request should throw exception")
+    void calculatePriceApiWithEmptyRequest_shouldReturn_StatusBadRequest() throws Exception {
+
+        List<BookRequest> emptyRequest = new ArrayList<> ();
+
+        mockMvc.perform (post ("/api/bookstore/calculateprice").contentType (MediaType.APPLICATION_JSON)
+                .content (new ObjectMapper ().writeValueAsString (emptyRequest))).andExpect (status ().isBadRequest ());
     }
 }
