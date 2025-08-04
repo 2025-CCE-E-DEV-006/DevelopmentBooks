@@ -1,0 +1,33 @@
+{
+  "listOfBookGroups": [
+    {
+      "bookIds": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "numberOfBooks": 4,
+      "discountPercentage": 20.0,
+      "actualPrice": 200.0,
+      "discountAmount": 40.0,
+      "finalGroupPrice": 160.0
+    },
+    {
+      "bookIds": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "numberOfBooks": 4,
+      "discountPercentage": 20.0,
+      "actualPrice": 200.0,
+      "discountAmount": 40.0,
+      "finalGroupPrice": 160.0
+    }
+  ],
+  "actualPrice": 400.0,
+  "totalDiscount": 80.0,
+  "finalPrice": 320.0
+}
