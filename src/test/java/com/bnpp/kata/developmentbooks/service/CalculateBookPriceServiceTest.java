@@ -36,4 +36,16 @@ public class CalculateBookPriceServiceTest {
 
         assertEquals(95.0, price);
     }
+
+    @Test
+    @DisplayName ("Three different book purchase : 10% discount is applicable")
+    public void calculatePriceForThreeDifferentBookPurchase_ShouldGive10PercentDiscount() {
+
+        List<BookRequest> bookRequests = Arrays.asList(new BookRequest(1, 1),new BookRequest(2, 1),
+                new BookRequest(3, 1));
+
+        double price = calculateBookPriceService.calculatePrice(bookRequests);
+
+        assertEquals(135.0, price);
+    }
 }
