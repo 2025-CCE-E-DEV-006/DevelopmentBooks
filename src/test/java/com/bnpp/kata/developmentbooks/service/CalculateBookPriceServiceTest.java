@@ -73,4 +73,16 @@ public class CalculateBookPriceServiceTest {
 
         assertEquals(160.0, price.getFinalPrice ());
     }
+
+    @Test
+    @DisplayName ("Five different book purchase with single copy : 25% discount is applicable ")
+    public void calculatePriceForFiveDifferentBookPurchase_ShouldGive25PercentDiscount() {
+
+        List<BookRequest> bookRequests = Arrays.asList(new BookRequest(1, 1),new BookRequest(2, 1),
+                new BookRequest(3, 1), new BookRequest(4, 1), new BookRequest(5, 1));
+
+        BookResponse price = calculateBookPriceService.calculatePrice(bookRequests);
+
+        assertEquals(187.5, price.getFinalPrice ());
+    }
 }
