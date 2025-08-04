@@ -1,6 +1,7 @@
 package com.bnpp.kata.developmentbooks.service;
 
 import com.bnpp.kata.developmentbooks.model.BookRequest;
+import com.bnpp.kata.developmentbooks.model.BookResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,9 @@ public class CalculateBookPriceServiceTest {
 
         List<BookRequest> bookRequests = Arrays.asList(new BookRequest(1, 1));
 
-        double price = calculateBookPriceService.calculatePrice(bookRequests);
+        BookResponse price = calculateBookPriceService.calculatePrice(bookRequests);
 
-        assertEquals(50.0, price);
+        assertEquals(50.0, price.getFinalPrice ());
     }
 
     @Test
@@ -32,9 +33,9 @@ public class CalculateBookPriceServiceTest {
 
         List<BookRequest> bookRequests = Arrays.asList(new BookRequest(1, 1),new BookRequest(2, 1));
 
-        double price = calculateBookPriceService.calculatePrice(bookRequests);
+        BookResponse price = calculateBookPriceService.calculatePrice(bookRequests);
 
-        assertEquals(95.0, price);
+        assertEquals(95.0, price.getFinalPrice ());
     }
 
     @Test
@@ -44,8 +45,8 @@ public class CalculateBookPriceServiceTest {
         List<BookRequest> bookRequests = Arrays.asList(new BookRequest(1, 1),new BookRequest(2, 1),
                 new BookRequest(3, 1));
 
-        double price = calculateBookPriceService.calculatePrice(bookRequests);
+        BookResponse price = calculateBookPriceService.calculatePrice(bookRequests);
 
-        assertEquals(135.0, price);
+        assertEquals(135.0, price.getFinalPrice ());
     }
 }
