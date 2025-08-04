@@ -4,27 +4,47 @@ import com.bnpp.kata.developmentbooks.model.BookRequest;
 import com.bnpp.kata.developmentbooks.model.BookResponse;
 import com.bnpp.kata.developmentbooks.store.BooksEnum;
 import org.springframework.stereotype.Service;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class CalculateBookPriceService {
 
     public BookResponse calculatePrice (List<BookRequest> bookRequest) {
 
-        double totalPrice = bookRequest.stream ().mapToDouble (bookReq -> {
-            BooksEnum book = Arrays.stream (BooksEnum.values ())
-                    .filter (bookValue -> bookValue.getId () == bookReq.getBookId ()).findFirst ().orElse (null);
-            return (book != null) ? book.getPrice () * bookReq.getQuantity () : 0.0;
-        }).sum ();
+        double finalPrice = 0.0;
+        Map<BooksEnum, Integer> bookCountMap = getBooksCount(bookRequest);
+        Map<BooksEnum, Integer> booksCount = new HashMap<> (bookCountMap);
 
-        long uniqueBookCount = bookRequest.stream ().map (BookRequest::getBookId).distinct ().count ();
+        while ((booksCount.values().stream().anyMatch(count -> count > 0))) {
 
-        double finalPrice = totalPrice * (1 - getDiscount (uniqueBookCount));
+            List<BooksEnum> selectedBooks = new ArrayList<> ();
+            for (BooksEnum bookEnum : BooksEnum.values()) {
+                if (booksCount.getOrDefault(bookEnum, 0) > 0) {
+                    selectedBooks.add(bookEnum);
+                    booksCount.put(bookEnum, booksCount.get(bookEnum) - 1);
+                }
+            }
+            if (!selectedBooks.isEmpty()) {
+                double actualPrice = selectedBooks.size() * 50;
+                finalPrice += actualPrice * (1 - getDiscount(selectedBooks.size()));
+            }
+        }
 
         return BookResponse.builder ()
                 .finalPrice (finalPrice)
                 .build ();
+    }
+
+    private Map<BooksEnum, Integer> getBooksCount(List<BookRequest> bookRequest) {
+
+        Map<BooksEnum, Integer> booksCount = new LinkedHashMap<> ();
+
+        bookRequest.forEach(request -> {
+            BooksEnum book = BooksEnum.values()[request.getBookId () - 1];
+            booksCount.put(book, request.getQuantity());
+        });
+
+        return booksCount;
     }
 
     private double getDiscount (long uniqueBookCount) {

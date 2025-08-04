@@ -49,4 +49,16 @@ public class CalculateBookPriceServiceTest {
 
         assertEquals(135.0, price.getFinalPrice ());
     }
+
+    @Test
+    @DisplayName ("Three different book purchase with multiple copies ")
+    public void CalculatePriceForThreeDifferentBookWithMultipleCopies_ReturnsMinimumTotalPrice() {
+
+        List<BookRequest> bookRequests = Arrays.asList(new BookRequest(1, 2),new BookRequest(2, 2),
+                new BookRequest(3, 1));
+
+        BookResponse price = calculateBookPriceService.calculatePrice(bookRequests);
+
+        assertEquals(230.0, price.getFinalPrice ());
+    }
 }
