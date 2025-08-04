@@ -29,6 +29,21 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>2.2.20</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.codegen.v3</groupId>
+			<artifactId>swagger-codegen-maven-plugin</artifactId>
+			<version>3.0.27</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+			<version>0.2.6</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
@@ -40,6 +55,38 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>5.3.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/swagger-developmentBooks.yaml</inputSpec>
+							<generatorName>spring</generatorName>
+							<modelPackage>
+								com.bnpp.kata.developmentbooks.model</modelPackage>
+							<configOptions>
+								<interfaceOnly>true</interfaceOnly>
+								<useBuilder>true</useBuilder>
+								<additionalModelTypeAnnotations>
+									@lombok.Builder
+									@lombok.NoArgsConstructor
+									@lombok.AllArgsConstructor
+								</additionalModelTypeAnnotations>
+							</configOptions>
+							<generateApis>false</generateApis>
+							<additionalProperties>
+								<skipDefaultInterface>false</skipDefaultInterface>
+								<skipDefaultMethods>true</skipDefaultMethods>
+							</additionalProperties>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

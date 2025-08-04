@@ -1,0 +1,114 @@
+openapi: 3.0.3
+info:
+  title: Development Books API
+  description: API for calculating discount price for books.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://localhost:8080/api
+
+paths:
+  /bookstore/calculatePrice:
+    post:
+      operationId: calculatePrice
+      requestBody:
+        required: true
+        description: Calculate the discount price.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookResponse'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        author:
+          type: string
+        year:
+          type: integer
+        price:
+          type: number
+          format: double
+
+    BookGroup:
+      type: object
+      properties:
+        bookIds:
+          type: array
+          items:
+            type: integer
+        numberOfBooks:
+          type: integer
+        discountPercentage:
+          type: number
+          format: double
+        actualPrice:
+          type: number
+          format: double
+        discountAmount:
+          type: number
+          format: double
+        finalGroupPrice:
+          type: number
+          format: double
+
+    BookRequest:
+      type: object
+      properties:
+        bookId:
+          type: integer
+        quantity:
+          type: integer
+
+    BookResponse:
+      type: object
+      properties:
+        listOfBookGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookGroup'
+        actualPrice:
+          type: number
+          format: double
+        totalDiscount:
+          type: number
+          format: double
+        finalPrice:
+          type: number
+          format: double
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        status:
+          type: integer
+        detailedErrorMessage:
+          type: string
