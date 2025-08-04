@@ -12,18 +12,14 @@ public class CalculateBookPriceService {
 
     public BookResponse calculatePrice (List<BookRequest> bookRequest) {
 
-        double finalPrice = 0.0;
         Map<BooksEnum, Integer> bookCountMap = getBooksCount(bookRequest);
-        Map<BooksEnum, Integer> booksCount = new HashMap<> (bookCountMap);
+        List<Double> possiblePrices = new ArrayList<>();
 
-        while (hasBooksLeft(booksCount)) {
-            List<BooksEnum> selectedBooks = selectBooks(booksCount);
-
-            if (!selectedBooks.isEmpty()) {
-                double actualPrice = selectedBooks.size() * 50;
-                finalPrice += actualPrice * (1 - getDiscount(selectedBooks.size()));
-            }
+        for (int numberOfBooks = 3; numberOfBooks <= 5; numberOfBooks++) {
+            double totalPriceForBooks = calculateCombinationPrice(numberOfBooks,bookCountMap);
+            possiblePrices.add(totalPriceForBooks);
         }
+        double finalPrice = possiblePrices.stream().min(Double::compare).orElse(0.0);
 
         return BookResponse.builder ()
                 .finalPrice (finalPrice)
@@ -42,19 +38,38 @@ public class CalculateBookPriceService {
         return booksCount;
     }
 
+    private double calculateCombinationPrice(int numberOfBooks, Map<BooksEnum, Integer> bookCountMap) {
+
+        Map<BooksEnum, Integer> booksCount = new HashMap<> (bookCountMap);
+        double totalPrice = 0.0;
+
+        while (hasBooksLeft(booksCount)) {
+
+            List<BooksEnum> selectedBooks = selectBooks(booksCount,numberOfBooks);
+            if (!selectedBooks.isEmpty()) {
+                double discount = getDiscount(selectedBooks.size());
+                double actualPrice = selectedBooks.size() * 50;
+                totalPrice += actualPrice * (1 - discount);
+            }
+        }
+        return totalPrice;
+    }
+
     private boolean hasBooksLeft(Map<BooksEnum, Integer> booksCount) {
         return booksCount.values().stream().anyMatch(count -> count > 0);
     }
 
-    private List<BooksEnum> selectBooks(Map<BooksEnum, Integer> booksCount) {
+    private List<BooksEnum> selectBooks(Map<BooksEnum, Integer> booksCount, int numberOfBooks) {
         List<BooksEnum> selectedBooks = new ArrayList<>();
 
-        for (BooksEnum bookEnum : BooksEnum.values()) {
-            if (booksCount.getOrDefault(bookEnum, 0) > 0) {
-                selectedBooks.add(bookEnum);
-                booksCount.put(bookEnum, booksCount.get(bookEnum) - 1);
-            }
-        }
+        Arrays.stream(BooksEnum.values()).filter(bookEnum -> booksCount.getOrDefault(bookEnum, 0) > 0)
+                .forEach(bookEnum -> {
+                    if (selectedBooks.size() < numberOfBooks) {
+                        selectedBooks.add(bookEnum);
+                        booksCount.put(bookEnum, booksCount.get(bookEnum) - 1);
+                    }
+                });
+
         return selectedBooks;
     }
 
