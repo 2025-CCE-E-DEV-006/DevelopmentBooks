@@ -49,4 +49,12 @@ public class BookStoreControllerTest {
         mockMvc.perform (post ("/api/bookstore/calculateprice").contentType (MediaType.APPLICATION_JSON)
                 .content (new ObjectMapper ().writeValueAsString (emptyRequest))).andExpect (status ().isBadRequest ());
     }
+
+    @Test
+    @DisplayName ("Rest API : null request should throw exception")
+    void calculatePriceApiWithNullRequest_shouldReturn_StatusInternalServerError() throws Exception {
+
+        mockMvc.perform(post("/api/bookstore/calculateprice").contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper ().writeValueAsString(null))).andExpect(status().isInternalServerError ());
+    }
 }

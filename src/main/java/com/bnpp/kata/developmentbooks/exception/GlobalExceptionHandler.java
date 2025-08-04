@@ -20,4 +20,16 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<> (errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+
+        ErrorResponse errorResponse	= ErrorResponse.builder()
+                .message(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .detailedErrorMessage(ex.getMessage())
+                .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
