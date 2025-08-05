@@ -113,6 +113,38 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>1.10.0</version>
+				<executions>
+					<execution>
+						<id>pit-report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>mutationCoverage</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-junit5-plugin</artifactId>
+						<version>1.0.0</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<targetClasses>
+						<param>com.bnpp.kata.developmentbooks.*</param>
+					</targetClasses>
+					<targetTests>
+						<param>com.bnpp.kata.developmentbooks.*</param>
+					</targetTests>
+					<excludedClasses>
+						com.bnpp.kata.developmentbooks.model.*
+					</excludedClasses>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
